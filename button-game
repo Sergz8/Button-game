@@ -1,0 +1,105 @@
+#импортируем необходимые библиотеки
+import os
+from tkinter import *
+from tkinter import Tk, Button
+#используем модуль случайных чисел
+#импортируем из модуля функции
+from random import randint, sample, shuffle
+
+print('== Hellow it is Buttle Game! == ')
+
+SIDE = eval(input( "Введите четное количество клеток в игре:"))
+#SIDE = 6
+QSIDE = (SIDE ** 2) // 2
+
+#создаем список попарно уникальных чисел
+main_window = Tk()
+main_window.title('Кнопки-перевертыши')
+
+nums = sample(range(1,1000), QSIDE) * 2
+shuffle(nums)
+print (nums)
+
+files = [os.path.join('gif', f) for f in os.listdir('gif')]
+shuffle(files)
+files = files[0:QSIDE] * 2
+shuffle(files)
+print(files)
+
+images = [PhotoImage(file=f) for f in files]
+faq = PhotoImage(file='FAQ.gif')
+
+
+#-----------------------------
+#Создаем фу#нкцию cmd-когда нажимаем на кнопку она вызывается
+#def cmd():
+  #  print('Я - полезная функция')
+   # print('')
+#-----------------,--------------------
+#Пишем функцию, которая прячет кнопки
+def hide_all(buttons):
+    for btn in buttons:
+        #btn.configure(text=' ? ')
+        btn.configure(image=faq)
+#------------------------------------
+
+#Пишем функцию двойной - тройной щелчок
+def double2_3(buttons):
+    i=1
+    global prev
+    for prev in buttons:
+        prev.configure(image=faq)
+    else:
+        btn.configure(image=btn.img)
+#------------------------------------
+def hide_both(prv,btn):
+    #btn.configure(text=' ? ')
+    #prev.configure(text=' ? ')
+    btn.configure(image=faq)
+    prev.configure(image=faq)
+
+#--------------------------------------
+def change(btn):
+    global prev
+
+    # btn.configure(text=btn.x)
+    btn.configure(image=btn.img)
+
+    if prev is None:
+        prev = btn
+    else:
+        if prev.img != btn.img or prev is btn:
+            main_window.after(1000, hide_both, prev, btn)
+        prev = None
+
+
+
+prev = None
+
+
+
+
+#создаем список кнопок
+buttons = []
+
+for i in range(SIDE):
+    for j in range(SIDE):
+        #картинки размещаем - на месте  знаков вопроса
+        #выбераем ширину (width) и высоту(height) картинки для одной ячейки
+
+        btn = Button(main_window, image = images[SIDE * i + j],width=80,height=80)
+        btn.configure(command=lambda b=btn: change(b))
+
+        #btn.pack()
+        #btn.x= nums[SIDE*i+j]
+        #btn.grid(row=i, column=j)
+        btn.x = nums[SIDE * i + j]
+        btn.img = images[SIDE * i + j]
+        btn.grid(row=i, column=j)
+        buttons.append(btn)
+
+
+# делаем задержку по времени, на сколько показать картинку, в 1000=1сек
+
+main_window.after(2500, hide_all, buttons)
+main_window.mainloop()
